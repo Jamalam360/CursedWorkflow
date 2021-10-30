@@ -34,6 +34,12 @@ jobs:
             macos-11,
             macos-10.15
         ]
+
+        java_package: [
+            jdk,
+            jre
+        ]
+
     runs-on: ${{ matrix.os }}
     steps:
 
@@ -47,6 +53,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
+          java-package: ${{ matrix.java_package }}
           distribution: ${{ matrix.java_distribution }}
 
       - name: Make Gradle Wrapper Executable
