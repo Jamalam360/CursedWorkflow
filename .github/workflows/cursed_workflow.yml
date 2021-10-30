@@ -1,0 +1,57 @@
+name: Cursed Workflow
+
+on: [ push, pull_request ]
+
+jobs:
+
+  build:
+
+    strategy:
+
+      matrix:
+
+        java: [
+            8,
+            11,
+            16,
+            17
+        ]
+
+        java_distribution: [
+            temurin,
+            zulu,
+            adopt,
+            adopt-hotspot,
+            adopt-openj9
+        ]
+
+        os: [
+            windows-2022,
+            windows-2019,
+            windows-2016,
+            ubuntu-20.04,
+            ubuntu-18.04,
+            macos-11,
+            macos-10.15
+        ]
+    runs-on: ${{ matrix.os }}
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Setup JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: ${{ matrix.java_distribution }}
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ false == contains(runner.os, 'windows') }}
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew build
